@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ski Tracker - F&B</title>
+    
+    <!-- Google Fonts - Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Auth Container (Login/Register) -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-box">
+            <img src="logo.png" alt="Ski Tracker F&B" class="auth-logo" />
+            <h1>Ski Tracker</h1>
+            <p class="auth-subtitle">Log in of maak een account aan</p>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label>📧 E-mail</label>
+                    <input type="email" id="login-email" required placeholder="jouw@email.com" />
+                </div>
+                <div class="form-group">
+                    <label>🔒 Wachtwoord</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" />
+                </div>
+                <button type="submit" class="auth-button">Inloggen</button>
+                <p class="auth-error" id="login-error"></p>
+            </form>
+            
+            <!-- Register Form (hidden by default) -->
+            <form id="register-form" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label>👤 Naam</label>
+                    <input type="text" id="register-name" required placeholder="Je naam" />
+                </div>
+                <div class="form-group">
+                    <label>📧 E-mail</label>
+                    <input type="email" id="register-email" required placeholder="jouw@email.com" />
+                </div>
+                <div class="form-group">
+                    <label>🔒 Wachtwoord</label>
+                    <input type="password" id="register-password" required placeholder="Minimaal 6 tekens" minlength="6" />
+                </div>
+                <div class="form-group">
+                    <label>🔒 Bevestig wachtwoord</label>
+                    <input type="password" id="register-password-confirm" required placeholder="••••••••" />
+                </div>
+                <button type="submit" class="auth-button">Account aanmaken</button>
+                <p class="auth-error" id="register-error"></p>
+            </form>
+            
+            <div class="auth-switch">
+                <p id="switch-to-register">Nog geen account? <a href="#" onclick="showRegisterForm()">Registreren</a></p>
+                <p id="switch-to-login" style="display: none;">Heb je al een account? <a href="#" onclick="showLoginForm()">Inloggen</a></p>
+            </div>
+            
+            <div class="auth-divider">
+                <span>of</span>
+            </div>
+            
+            <button onclick="signInWithGoogle()" class="google-button">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+                Inloggen met Google
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main App Container (hidden until logged in) -->
+    <div id="app-container" class="container" style="display: none;">
+        <!-- Header with title, user info and logo -->
+        <header class="site-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🎿 Mijn Ski Tracker</h1>
+                    <p class="subtitle">Klik op een marker of in de lijst om je bezoeken te registreren!</p>
+                </div>
+                <div class="header-center">
+                    <div class="user-info">
+                        <span id="user-display-name">Gebruiker</span>
+                        <a href="profile.html" class="profile-button">👤 Mijn Profiel</a>
+                        <button onclick="handleLogout()" class="logout-button">Uitloggen</button>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <img src="logo.png" alt="Ski Tracker F&B" class="site-logo" />
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- Timeline on the left -->
+            <div class="timeline-container">
+                <h3>📅 Mijn Tijdlijn</h3>
+                <div class="timeline-stats">
+                    <span id="timeline-total">0</span> bezoeken
+                </div>
+                <div class="timeline" id="timeline">
+                    <p class="no-visits-yet">Nog geen bezoeken geregistreerd.</p>
+                </div>
+            </div>
+            
+            <!-- The map in the center -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            
+            <!-- Sidebar with list on the right -->
+            <div class="sidebar">
+                <h3>📋 Skigebieden</h3>
+                <div class="stats">
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <div class="number" id="visited-count">0</div>
+                            <div>gebieden</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number" id="total-visits">0</div>
+                            <div>bezoeken</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter -->
+                <div class="search-filter-container">
+                    <div class="search-box">
+                        <input type="text" id="resort-search" placeholder="🔍 Zoek skigebied..." oninput="filterResortList()" />
+                    </div>
+                    <div class="country-filter">
+                        <button class="filter-btn active" data-country="all" onclick="setCountryFilter('all')">Alle</button>
+                        <button class="filter-btn" data-country="AT" onclick="setCountryFilter('AT')">🇦🇹</button>
+                        <button class="filter-btn" data-country="CH" onclick="setCountryFilter('CH')">🇨🇭</button>
+                        <button class="filter-btn" data-country="FR" onclick="setCountryFilter('FR')">🇫🇷</button>
+                        <button class="filter-btn" data-country="IT" onclick="setCountryFilter('IT')">🇮🇹</button>
+                    </div>
+                    <div class="filter-results" id="filter-results"></div>
+                </div>
+                
+                <ul class="resort-list" id="resort-list"></ul>
+                <button class="reset-button" onclick="resetAll()">🗑️ Reset alles</button>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <h3>Legenda</h3>
+            <p><b>Markers:</b></p>
+            <div class="legend-row">
+                <div class="legend-item"><div class="dot visited-color"></div><span>Bezocht</span></div>
+                <div class="legend-item"><div class="dot region-colors"></div><span>Nog niet bezocht (regio kleur)</span></div>
+            </div>
+            <p><b>Skiregio's:</b></p>
+            <div class="legend-row" id="region-legend"></div>
+        </div>
+        
+        <!-- Tip -->
+        <div class="tip">
+            💡 <b>Tip:</b> Klik op een marker om de pistekaart te bekijken, bezoeken toe te voegen met beoordelingen en accommodatie info!
+        </div>
+    </div>
+    
+    <!-- Visit Modal -->
+    <div id="visit-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Skigebied</h2>
+            <p id="modal-region"></p>
+            
+            <div class="add-visit-section">
+                <h4>➕ Nieuw bezoek toevoegen</h4>
+                
+                <!-- Date Section -->
+                <div class="form-group">
+                    <label>📅 Periode</label>
+                    <div class="date-range">
+                        <div class="date-input">
+                            <span>Van:</span>
+                            <input type="date" id="visit-start-date" />
+                        </div>
+                        <div class="date-input">
+                            <span>Tot:</span>
+                            <input type="date" id="visit-end-date" />
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Companions Section -->
+                <div class="form-group">
+                    <label>👥 Met wie?</label>
+                    <input type="text" id="visit-companions" placeholder="bijv. Familie, Jan en Piet, Solo..." />
+                </div>
+                
+                <!-- Ski Area Ratings -->
+                <div class="ratings-section">
+                    <label>⭐ Beoordeling Skigebied</label>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">🏔️ Grootte skigebied</span>
+                        <div class="star-rating" data-rating="size">
+                            <input type="radio" id="size-5" name="rating-size" value="5"><label for="size-5">★</label>
+                            <input type="radio" id="size-4" name="rating-size" value="4"><label for="size-4">★</label>
+                            <input type="radio" id="size-3" name="rating-size" value="3"><label for="size-3">★</label>
+                            <input type="radio" id="size-2" name="rating-size" value="2"><label for="size-2">★</label>
+                            <input type="radio" id="size-1" name="rating-size" value="1"><label for="size-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">⬇️ Afdaling naar dal</span>
+                        <div class="star-rating" data-rating="descent">
+                            <input type="radio" id="descent-5" name="rating-descent" value="5"><label for="descent-5">★</label>
+                            <input type="radio" id="descent-4" name="rating-descent" value="4"><label for="descent-4">★</label>
+                            <input type="radio" id="descent-3" name="rating-descent" value="3"><label for="descent-3">★</label>
+                            <input type="radio" id="descent-2" name="rating-descent" value="2"><label for="descent-2">★</label>
+                            <input type="radio" id="descent-1" name="rating-descent" value="1"><label for="descent-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">🎉 Sfeer</span>
+                        <div class="star-rating" data-rating="atmosphere">
+                            <input type="radio" id="atmosphere-5" name="rating-atmosphere" value="5"><label for="atmosphere-5">★</label>
+                            <input type="radio" id="atmosphere-4" name="rating-atmosphere" value="4"><label for="atmosphere-4">★</label>
+                            <input type="radio" id="atmosphere-3" name="rating-atmosphere" value="3"><label for="atmosphere-3">★</label>
+                            <input type="radio" id="atmosphere-2" name="rating-atmosphere" value="2"><label for="atmosphere-2">★</label>
+                            <input type="radio" id="atmosphere-1" name="rating-atmosphere" value="1"><label for="atmosphere-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">💰 Prijs skigebied</span>
+                        <div class="star-rating" data-rating="pricing">
+                            <input type="radio" id="pricing-5" name="rating-pricing" value="5"><label for="pricing-5">★</label>
+                            <input type="radio" id="pricing-4" name="rating-pricing" value="4"><label for="pricing-4">★</label>
+                            <input type="radio" id="pricing-3" name="rating-pricing" value="3"><label for="pricing-3">★</label>
+                            <input type="radio" id="pricing-2" name="rating-pricing" value="2"><label for="pricing-2">★</label>
+                            <input type="radio" id="pricing-1" name="rating-pricing" value="1"><label for="pricing-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">🎿 Geschikt voor toeren</span>
+                        <div class="star-rating" data-rating="touring">
+                            <input type="radio" id="touring-5" name="rating-touring" value="5"><label for="touring-5">★</label>
+                            <input type="radio" id="touring-4" name="rating-touring" value="4"><label for="touring-4">★</label>
+                            <input type="radio" id="touring-3" name="rating-touring" value="3"><label for="touring-3">★</label>
+                            <input type="radio" id="touring-2" name="rating-touring" value="2"><label for="touring-2">★</label>
+                            <input type="radio" id="touring-1" name="rating-touring" value="1"><label for="touring-1">★</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accommodation Section -->
+                <div class="accommodation-section">
+                    <label>🏨 Accommodatie</label>
+                    
+                    <div class="form-group">
+                        <label class="sub-label">Type accommodatie *</label>
+                        <div class="accommodation-type-selector">
+                            <label class="accommodation-option">
+                                <input type="radio" name="accommodation-type" value="hotel" />
+                                <span class="option-card">
+                                    <span class="option-icon">🏨</span>
+                                    <span class="option-text">Hotel</span>
+                                </span>
+                            </label>
+                            <label class="accommodation-option">
+                                <input type="radio" name="accommodation-type" value="appartement" />
+                                <span class="option-card">
+                                    <span class="option-icon">🏢</span>
+                                    <span class="option-text">Appartement</span>
+                                </span>
+                            </label>
+                            <label class="accommodation-option">
+                                <input type="radio" name="accommodation-type" value="house" />
+                                <span class="option-card">
+                                    <span class="option-icon">🏠</span>
+                                    <span class="option-text">Huis</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="sub-label">🔗 Link naar accommodatie</label>
+                        <input type="url" id="accommodation-url" placeholder="https://www.booking.com/..." />
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">💶 Prijs accommodatie</span>
+                        <div class="star-rating" data-rating="accPrice">
+                            <input type="radio" id="accPrice-5" name="rating-accPrice" value="5"><label for="accPrice-5">★</label>
+                            <input type="radio" id="accPrice-4" name="rating-accPrice" value="4"><label for="accPrice-4">★</label>
+                            <input type="radio" id="accPrice-3" name="rating-accPrice" value="3"><label for="accPrice-3">★</label>
+                            <input type="radio" id="accPrice-2" name="rating-accPrice" value="2"><label for="accPrice-2">★</label>
+                            <input type="radio" id="accPrice-1" name="rating-accPrice" value="1"><label for="accPrice-1">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <span class="rating-label">✨ Kwaliteit accommodatie</span>
+                        <div class="star-rating" data-rating="accQuality">
+                            <input type="radio" id="accQuality-5" name="rating-accQuality" value="5"><label for="accQuality-5">★</label>
+                            <input type="radio" id="accQuality-4" name="rating-accQuality" value="4"><label for="accQuality-4">★</label>
+                            <input type="radio" id="accQuality-3" name="rating-accQuality" value="3"><label for="accQuality-3">★</label>
+                            <input type="radio" id="accQuality-2" name="rating-accQuality" value="2"><label for="accQuality-2">★</label>
+                            <input type="radio" id="accQuality-1" name="rating-accQuality" value="1"><label for="accQuality-1">★</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes Section -->
+                <div class="notes-section">
+                    <label>📝 Notities</label>
+                    <div class="editor-toolbar">
+                        <button type="button" onclick="formatText('bold')" title="Vet"><b>B</b></button>
+                        <button type="button" onclick="formatText('italic')" title="Cursief"><i>I</i></button>
+                        <button type="button" onclick="formatText('underline')" title="Onderstrepen"><u>U</u></button>
+                        <button type="button" onclick="formatText('insertUnorderedList')" title="Opsomming">•</button>
+                    </div>
+                    <div id="notes-editor" class="rich-text-editor" contenteditable="true"></div>
+                    <p class="editor-hint">Schrijf hier je ervaringen, tips en opmerkingen...</p>
+                </div>
+                
+                <!-- Photos Section -->
+                <div class="photos-section">
+                    <label>📷 Foto's</label>
+                    <div class="photo-upload-area" id="photo-upload-area">
+                        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotoUpload(event)" />
+                        <label for="photo-input" class="photo-upload-label">
+                            <span class="upload-icon">📁</span>
+                            <span>Klik om foto's te selecteren</span>
+                            <span class="upload-hint">of sleep ze hierheen</span>
+                        </label>
+                    </div>
+                    <div class="photo-preview-container" id="photo-preview-container"></div>
+                    <p class="photo-hint">Max 5 foto's per bezoek. Foto's worden lokaal opgeslagen.</p>
+                </div>
+                
+                <div class="form-buttons">
+                    <button onclick="saveVisit()" class="add-button" id="save-visit-button">Bezoek toevoegen</button>
+                    <button onclick="cancelEdit()" class="cancel-button" id="cancel-edit-button" style="display: none;">Annuleren</button>
+                </div>
+            </div>
+            
+            <div class="visit-history">
+                <h4>📅 Bezoeken (<span id="visit-count">0</span>)</h4>
+                <ul id="visit-list"></ul>
+                <p id="no-visits-message">Nog geen bezoeken geregistreerd.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Laden...</p>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Our JavaScript -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
