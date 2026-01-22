@@ -3,8 +3,8 @@
 // ===========================
 
 var skiRatingCategories = [
-    { id: 'size', name: 'Grootte skigebied', icon: '🏔️' },
-    { id: 'descent', name: 'Afdaling naar dal', icon: '⬇️' },
+    { id: 'size', name: 'Grootte skigebied', icon: 'ðŸ”ï¸' },
+    { id: 'descent', name: 'Afdaling naar dal', icon: '⬇ï¸' },
     { id: 'atmosphere', name: 'Sfeer', icon: '🎉' },
     { id: 'pricing', name: 'Prijs skigebied', icon: '💰' },
     { id: 'touring', name: 'Geschikt voor toeren', icon: '🎿' }
@@ -18,9 +18,9 @@ var accommodationRatingCategories = [
 var allRatingCategories = skiRatingCategories.concat(accommodationRatingCategories);
 
 var accommodationTypes = {
-    hotel: { name: 'Hotel', icon: '🏨' },
-    appartement: { name: 'Appartement', icon: '🏢' },
-    house: { name: 'Huis', icon: '🏠' }
+    hotel: { name: 'Hotel', icon: 'ðŸ¨' },
+    appartement: { name: 'Appartement', icon: 'ðŸ¢' },
+    house: { name: 'Huis', icon: 'ðŸ ' }
 };
 
 // Edit mode tracking
@@ -1185,7 +1185,7 @@ function updateTimeline() {
     
     var html = '';
     Object.keys(visitsByYear).sort(function(a, b) { return b - a; }).forEach(function(year) {
-        html += '<div class="timeline-year">🗓️ ' + year + '</div>';
+        html += '<div class="timeline-year">🗓ï¸ ' + year + '</div>';
         
         visitsByYear[year].forEach(function(visit) {
             var companionsHtml = visit.companions ? '<div class="timeline-item-companions">' + visit.companions + '</div>' : '';
@@ -1249,7 +1249,7 @@ function bindMarkerPopup(resortName) {
     
     var regionEl = document.createElement('p');
     regionEl.className = 'popup-region';
-    regionEl.innerHTML = '📍 ' + resort.region;
+    regionEl.innerHTML = 'ðŸ“ ' + resort.region;
     popupContent.appendChild(regionEl);
     
     var pisteEl = document.createElement('p');
@@ -1269,7 +1269,7 @@ function bindMarkerPopup(resortName) {
     skiMapButton.className = 'popup-button ski-map-button';
     skiMapButton.href = resort.skiMapUrl;
     skiMapButton.target = '_blank';
-    skiMapButton.innerHTML = '🗺️ Bekijk Pistekaart';
+    skiMapButton.innerHTML = '🗺ï¸ Bekijk Pistekaart';
     buttonsDiv.appendChild(skiMapButton);
     
     var manageButton = document.createElement('button');
@@ -1402,7 +1402,7 @@ function updateModalVisitList() {
             
             var accTitle = document.createElement('div');
             accTitle.className = 'visit-accommodation-title';
-            accTitle.textContent = '🏨 Accommodatie';
+            accTitle.textContent = 'ðŸ¨ Accommodatie';
             accDiv.appendChild(accTitle);
             
             var accType = accommodationTypes[visit.accommodation.type];
@@ -1430,7 +1430,7 @@ function updateModalVisitList() {
             
             var notesTitle = document.createElement('div');
             notesTitle.className = 'visit-notes-title';
-            notesTitle.textContent = '📝 Notities';
+            notesTitle.textContent = 'ðŸ“ Notities';
             notesDiv.appendChild(notesTitle);
             
             var notesContent = document.createElement('div');

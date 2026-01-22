@@ -133,6 +133,7 @@ async function loadProfile() {
                 location: '',
                 birthdate: '',
                 skillLevel: '',
+                favoriteBrand: '',
                 favoriteResort: '',
                 bio: '',
                 photoUrl: currentUser.photoURL || ''
@@ -153,6 +154,7 @@ function populateProfileForm(profile) {
     document.getElementById('profile-location').value = profile.location || '';
     document.getElementById('profile-birthdate').value = profile.birthdate || '';
     document.getElementById('profile-skill-level').value = profile.skillLevel || '';
+    document.getElementById('profile-favorite-brand').value = profile.favoriteBrand || '';
     document.getElementById('profile-favorite-resort').value = profile.favoriteResort || '';
     document.getElementById('profile-bio').value = profile.bio || '';
 }
@@ -247,6 +249,7 @@ async function saveProfile() {
         location: document.getElementById('profile-location').value.trim(),
         birthdate: document.getElementById('profile-birthdate').value,
         skillLevel: document.getElementById('profile-skill-level').value,
+        favoriteBrand: document.getElementById('profile-favorite-brand').value.trim(),
         favoriteResort: document.getElementById('profile-favorite-resort').value.trim(),
         bio: document.getElementById('profile-bio').value.trim(),
         photoUrl: currentProfile ? currentProfile.photoUrl : '',
@@ -366,7 +369,7 @@ async function updateProfileStats() {
 
 const PACKING_CATEGORIES = {
     vooraf: { name: 'Van tevoren regelen', icon: '📋' },
-    ski: { name: 'Ski uitrusting', icon: '⛷️' },
+    ski: { name: 'Ski uitrusting', icon: '⛷ï¸' },
     kleding: { name: 'Vrijetijdskleding', icon: '👕' },
     toiletartikelen: { name: 'Toiletartikelen', icon: '🧴' },
     documenten: { name: 'Belangrijke documenten', icon: '📄' },
@@ -857,7 +860,7 @@ function renderTips() {
             <div class="tip-card" data-id="${tip.id}">
                 <div class="tip-card-header">
                     <h4 class="tip-subject">${escapeHtml(tip.subject)}</h4>
-                    <button class="tip-delete-btn" onclick="deleteTip('${tip.id}')" title="Verwijderen">🗑️</button>
+                    <button class="tip-delete-btn" onclick="deleteTip('${tip.id}')" title="Verwijderen">🗑ï¸</button>
                 </div>
                 <p class="tip-description">${escapeHtml(tip.description).replace(/\n/g, '<br>')}</p>
                 ${tip.photoUrl ? `
@@ -1106,7 +1109,7 @@ function renderFriends() {
                 <div class="friend-info">
                     <span class="friend-name">${escapeHtml(user.name || 'Onbekend')}</span>
                     <span class="friend-username">@${escapeHtml(user.username || 'geen-gebruikersnaam')}</span>
-                    ${user.skillLevel ? `<span class="friend-skill">⛷️ ${capitalizeFirst(user.skillLevel)}</span>` : ''}
+                    ${user.skillLevel ? `<span class="friend-skill">⛷ï¸ ${capitalizeFirst(user.skillLevel)}</span>` : ''}
                 </div>
                 <button class="remove-friend-button" onclick="removeFriend('${user.uid}')">Verwijderen</button>
             </div>
@@ -1140,7 +1143,7 @@ function renderPendingRequests() {
                 <div class="friend-info">
                     <span class="friend-name">${escapeHtml(request.name || 'Onbekend')}</span>
                     <span class="friend-username">@${escapeHtml(request.username || 'geen-gebruikersnaam')}</span>
-                    ${request.skillLevel ? `<span class="friend-skill">⛷️ ${capitalizeFirst(request.skillLevel)}</span>` : ''}
+                    ${request.skillLevel ? `<span class="friend-skill">⛷ï¸ ${capitalizeFirst(request.skillLevel)}</span>` : ''}
                 </div>
                 <div class="request-actions">
                     <button class="accept-button" onclick="acceptFriendRequest('${request.fromUid}')">✓ Accepteren</button>
@@ -1207,7 +1210,7 @@ async function searchUsers() {
         return;
     }
     
-    resultsContainer.innerHTML = '<p class="searching">🔍 Zoeken...</p>';
+    resultsContainer.innerHTML = '<p class="searching">ðŸ” Zoeken...</p>';
     
     try {
         // Search by username (starts with)
@@ -1257,7 +1260,7 @@ function renderSearchResults(results) {
         if (isFriend) {
             buttonHtml = `<button class="friend-badge" disabled>👥 Vrienden</button>`;
         } else if (hasSentRequest) {
-            buttonHtml = `<button class="pending-button" disabled>⏳ Wacht op reactie</button>`;
+            buttonHtml = `<button class="pending-button" disabled>â³ Wacht op reactie</button>`;
         } else if (hasReceivedRequest) {
             buttonHtml = `<button class="accept-button" onclick="acceptFriendRequest('${user.uid}')">✓ Accepteren</button>`;
         } else {
@@ -1272,7 +1275,7 @@ function renderSearchResults(results) {
                 <div class="friend-info">
                     <span class="friend-name">${escapeHtml(user.name || 'Onbekend')}</span>
                     <span class="friend-username">@${escapeHtml(user.username)}</span>
-                    ${user.skillLevel ? `<span class="friend-skill">⛷️ ${capitalizeFirst(user.skillLevel)}</span>` : ''}
+                    ${user.skillLevel ? `<span class="friend-skill">⛷ï¸ ${capitalizeFirst(user.skillLevel)}</span>` : ''}
                 </div>
                 ${buttonHtml}
             </div>

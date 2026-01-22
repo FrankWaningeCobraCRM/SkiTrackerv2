@@ -30,7 +30,7 @@
                     <div class="user-info">
                         <img id="user-avatar" class="user-avatar" src="" alt="Avatar" style="display: none;" />
                         <span id="user-display-name">Gebruiker</span>
-                        <a href="index.html" class="profile-button">🏠 Home</a>
+                        <a href="index.html" class="profile-button">ðŸ  Home</a>
                         <button onclick="handleLogout()" class="logout-button">Uitloggen</button>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                                 <input type="text" id="profile-name" placeholder="Je naam" />
                             </div>
                             <div class="form-group">
-                                <label>🏷️ Gebruikersnaam</label>
+                                <label>ðŸ·ï¸ Gebruikersnaam</label>
                                 <input type="text" id="profile-username" placeholder="Je unieke gebruikersnaam" pattern="[a-zA-Z0-9_]+" title="Alleen letters, cijfers en underscores" />
                                 <small class="username-hint">Anderen kunnen je hiermee vinden</small>
                             </div>
@@ -95,7 +95,7 @@
                                 <input type="email" id="profile-email" disabled />
                             </div>
                             <div class="form-group">
-                                <label>📍 Woonplaats</label>
+                                <label>ðŸ“ Woonplaats</label>
                                 <input type="text" id="profile-location" placeholder="Je woonplaats" />
                             </div>
                             <div class="form-group">
@@ -103,7 +103,7 @@
                                 <input type="date" id="profile-birthdate" />
                             </div>
                             <div class="form-group">
-                                <label>⛷️ Ski niveau</label>
+                                <label>⛷️ Ski niveau</label>
                                 <select id="profile-skill-level">
                                     <option value="">Selecteer niveau</option>
                                     <option value="beginner">Beginner</option>
@@ -113,12 +113,16 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>❤️ Favoriete skigebied</label>
+                                <label>🎿 Favoriete ski-merk</label>
+                                <input type="text" id="profile-favorite-brand" placeholder="Je favoriete ski-merk" />
+                            </div>
+                            <div class="form-group">
+                                <label>â¤ï¸ Favoriete skigebied</label>
                                 <input type="text" id="profile-favorite-resort" placeholder="Je favoriete skigebied" />
                             </div>
                         </div>
                         <div class="form-group full-width">
-                            <label>📝 Over mij</label>
+                            <label>ðŸ“ Over mij</label>
                             <textarea id="profile-bio" placeholder="Vertel iets over jezelf en je ski-avonturen..." rows="3"></textarea>
                         </div>
                         <div class="profile-form-buttons">
@@ -169,7 +173,7 @@
                     <div class="packing-list-add">
                         <select id="new-packing-category">
                             <option value="vooraf">📋 Van tevoren regelen</option>
-                            <option value="ski">⛷️ Ski uitrusting</option>
+                            <option value="ski">⛷️ Ski uitrusting</option>
                             <option value="kleding">👕 Vrijetijdskleding</option>
                             <option value="toiletartikelen">🧴 Toiletartikelen</option>
                             <option value="documenten">📄 Belangrijke documenten</option>
@@ -186,8 +190,8 @@
                     
                     <!-- Packing List Actions -->
                     <div class="packing-list-actions" id="packing-list-actions" style="display: none;">
-                        <button onclick="uncheckAllItems()" class="packing-action-button">☐ Alles uitvinken</button>
-                        <button onclick="deleteCheckedItems()" class="packing-action-button delete">🗑️ Verwijder aangevinkte</button>
+                        <button onclick="uncheckAllItems()" class="packing-action-button">â˜ Alles uitvinken</button>
+                        <button onclick="deleteCheckedItems()" class="packing-action-button delete">🗑ï¸ Verwijder aangevinkte</button>
                         <button onclick="resetToDefaults()" class="packing-action-button reset">🔄 Herstel standaard</button>
                     </div>
                 </div>
@@ -211,7 +215,7 @@
                         </div>
                         <div class="tips-form-row">
                             <div class="form-group">
-                                <label>📝 Beschrijving</label>
+                                <label>ðŸ“ Beschrijving</label>
                                 <textarea id="new-tip-description" placeholder="Beschrijf je tip of ervaring..." rows="3"></textarea>
                             </div>
                         </div>
@@ -263,7 +267,7 @@
                     <div class="friends-search">
                         <div class="search-input-container">
                             <input type="text" id="friend-search-input" placeholder="Zoek op gebruikersnaam..." onkeypress="handleFriendSearchKeypress(event)" />
-                            <button onclick="searchUsers()" class="search-button">🔍 Zoeken</button>
+                            <button onclick="searchUsers()" class="search-button">ðŸ” Zoeken</button>
                         </div>
                         <div class="search-results" id="search-results">
                             <!-- Search results will appear here -->
@@ -272,7 +276,7 @@
                     
                     <!-- Sent Requests (outgoing, waiting for acceptance) -->
                     <div class="sent-requests-section" id="sent-requests-section" style="display: none;">
-                        <h4>⏳ Verzonden verzoeken <span id="sent-requests-count">(0)</span></h4>
+                        <h4>â³ Verzonden verzoeken <span id="sent-requests-count">(0)</span></h4>
                         <div class="sent-requests-list" id="sent-requests-list">
                             <!-- Sent requests will appear here -->
                         </div>
